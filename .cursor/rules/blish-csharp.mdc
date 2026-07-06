@@ -1,0 +1,38 @@
+---
+description: C# and Blish HUD patterns for this module
+globs: "**/*.cs"
+alwaysApply: false
+---
+
+# C# / Blish HUD conventions
+
+## Style
+
+- Match existing code: `sealed` classes, nullable enabled, minimal scope, no over-abstraction.
+- Namespace: `Gw2EventTracker`, `Gw2EventTracker.Services`, `Gw2EventTracker.UI`, `Gw2EventTracker.Models`.
+- Module entry: `[Export(typeof(Module))]` on `EventTrackerModule`, MEF constructor with `[Import("ModuleParameters")]`.
+
+## Blish UI
+
+- Prefer `Panel` with `CanScroll = true` over `Container` (no scroll support).
+- `ContentRegion.Size` is a `Point` — use `.X` / `.Y`, not `.Width`.
+- Set child `Height` before parents that read layout in `OnResized`; guard null children during ctor.
+- Textures from `ContentsManager.GetTexture("textures/...")` or `GameService.Content`.
+
+## Logging
+
+```csharp
+private static readonly Logger Logger = Logger.GetLogger<MyClass>();
+```
+
+## File encoding (critical)
+
+`StrReplace` / `Write` can save `.cs` files as UTF-16 and break the build (`\0` errors). After editing `.cs` files, if build fails with encoding errors, re-save as UTF-8 without BOM:
+
+```powershell
+$utf8 = New-Object System.Text.UTF8Encoding $false
+$text = [System.IO.File]::ReadAllText($path, [System.Text.Encoding]::Unicode)
+[System.IO.File]::WriteAllText($path, $text, $utf8)
+```
+
+Same for `manifest.json` — always UTF-8 without BOM.

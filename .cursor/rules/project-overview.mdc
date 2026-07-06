@@ -1,0 +1,34 @@
+---
+description: GW2 Event Tracker architecture and where things live
+alwaysApply: true
+---
+
+# GW2 Event Tracker
+
+Blish HUD module (`namespace`: `gw2eventtracker`). .NET Framework 4.7.2, x64, Blish HUD 1.3+.
+
+## Layout
+
+| Area | Path |
+|---|---|
+| Entry | `EventTrackerModule.cs` |
+| Settings | `Services/ModuleSettings.cs` |
+| Schedule engine | `Services/EventScheduleEngine.cs`, `EventScheduleLoader.cs`, `EventSchedulePatcher.cs` |
+| GW2 API progress | `Services/AccountProgressService.cs`, `TrackableRewardsCatalog.cs` |
+| Alerts | `Services/AlertService.cs` |
+| Main UI | `UI/EventTrackerView.cs`, `DailyProgressView.cs`, `SettingsView.cs`, `NextUpOverlayWidget.cs` |
+| Schedule data | `ref/Data/events.json`, `ref/Data/trackable-rewards.json` (embedded + copied into `.bhm`) |
+| Manifest | `manifest.json` (UTF-8, no BOM) |
+
+Do not edit `Data/` — it is gitignored; canonical JSON lives under `ref/Data/`.
+
+## Key behavior
+
+- **Daily reset** = 00:00 UTC. `EventScheduleEngine.DailyReset` clears snoozes/alerts; `AccountProgressService.HandleDailyReset` clears completion cache and refetches API.
+- **Remote schedule** loads giovazz89 `events.json`; `EventSchedulePatcher` fixes gaps (e.g. renamed Amnytas meta, Inner Nayos).
+- **Trackable reward names** in `trackable-rewards.json` must match segment names (or use `alsoAppliesTo` aliases).
+- **UI threading**: use `GameService.Overlay.QueueMainThreadUpdate` for UI updates from async/API callbacks.
+
+## Scripts
+
+- `deploy.ps1` — Debug build + local install + restart Blish

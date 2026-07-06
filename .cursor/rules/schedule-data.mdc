@@ -1,0 +1,32 @@
+---
+description: Event schedule JSON and daily-reward mapping rules
+globs: "{ref/Data/**,Services/EventSchedule*.cs,Services/TrackableRewards*.cs,Services/EventCategoryMapper.cs,Services/EventMapMapper.cs}"
+alwaysApply: false
+---
+
+# Schedule and reward data
+
+## events.json (giovazz89 format)
+
+- Canonical copy: `ref/Data/events.json` (embedded in DLL at build).
+- Sections have `segments` + `sequences` (`partial` / `pattern` with `r` = segment ref, `d` = minutes).
+- Empty segment names (`""`) are downtime phases — not shown as tracked events.
+- Remote fetch: giovazz89 GitHub; patches applied in `EventSchedulePatcher.Apply()`.
+
+When upstream is missing or misnamed metas:
+
+1. Add/fix in `ref/Data/events.json` for embedded fallback.
+2. Add rename or inject logic in `EventSchedulePatcher.cs` for remote loads.
+3. Update `EventMapMapper.cs` section → map ID if map-aware features should work.
+4. Update `EventCategoryMapper.cs` `MetaSections` if it is a meta map.
+
+## trackable-rewards.json
+
+- Maps `scheduleName` → GW2 API id (`worldboss` or `mapchest`).
+- Use `alsoAppliesTo` when one daily chest covers multiple segment names (e.g. Octovine / Pylons / Challenges).
+- `scheduleName` must match `TrackedEvent.SegmentName` for completion icons and alert suppression.
+
+## Chain-triggered metas (no fixed timer)
+
+- Example: Inner Nayos / Into the Spider's Lair — use empty `pattern` in events.json.
+- UI shows `--` and tooltip: not on a fixed timer.

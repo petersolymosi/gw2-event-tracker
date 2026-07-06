@@ -1,0 +1,76 @@
+## Build results
+[Bb]in/
+[Oo]bj/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Ll]og/
+[Ll]ogs/
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+## Visual Studio / Rider
+.vs/
+**/.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.rsuser
+.idea/
+*.DotSettings.user
+UpgradeLog.htm
+UpgradeLog*.htm
+
+## VS Code (keep shared settings if you add them later)
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+## Build artifacts
+*.dll
+*.pdb
+*.bhm
+*.cache
+*.log
+.module_staging/
+.bhm/
+dist/
+
+## NuGet
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+packages/
+
+## OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+*.tmp
+
+## Local duplicate data at repo root (canonical schedule data is under ref/Data/)
+/Data/
+
+## Cursor (local agent state; rules in .cursor/rules/ are committed)
+.cursor/projects/
+.cursor/plans/
+
+## Secrets / local overrides
+.env
+*.env
+secrets.json
+deploy.local.ps1
+
+## Local-only (not published)
+PUBLISH.md
+publish.ps1
+SSRD_PROFILE.md

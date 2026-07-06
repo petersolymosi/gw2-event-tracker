@@ -1,0 +1,35 @@
+---
+description: Blish HUD UI layout patterns used in this module
+globs: "UI/**/*.cs"
+alwaysApply: false
+---
+
+# UI patterns
+
+## Event Tracker header order (top → bottom)
+
+1. Profile dropdown + sort + notification toggles
+2. Summary bar (daily progress + recommender)
+3. Search box
+4. Category menu (left) + event card grid (right)
+
+Do not reorder without fixing overlap — search was previously clipped by the summary bar.
+
+## Category menu scrolling
+
+Wrap `Menu` in a `Panel` with `CanScroll = true` and set explicit `menu.Height = itemCount * menuItemHeight`.
+
+## Settings page
+
+- Use a single inner `content` panel with `CanScroll = true`.
+- Do not set outer `buildPanel.Height` — causes double scrollbars with Blish's outer settings scroll.
+
+## Refresh contract
+
+- `EventTrackerView.RefreshList()` calls `ApplyCompletionStates` then updates cards.
+- Wire new UI to existing refresh paths: module `Update` (5s), `ProgressUpdated`, `OnDailyReset`.
+
+## Notifications
+
+- Right-click notification or event card → snooze until UTC daily reset.
+- Snoozes are scoped to current UTC date (`ModuleSettings._snoozeUtcDate`).

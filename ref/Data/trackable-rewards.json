@@ -1,0 +1,35 @@
+{
+  "segments": [
+    { "scheduleName": "Admiral Taidha Covington", "trackType": "worldboss", "apiId": "admiral_taidha_covington" },
+    { "scheduleName": "Claw of Jormag", "trackType": "worldboss", "apiId": "claw_of_jormag" },
+    { "scheduleName": "Fire Elemental", "trackType": "worldboss", "apiId": "fire_elemental" },
+    { "scheduleName": "Golem Mark II", "trackType": "worldboss", "apiId": "inquest_golem_mark_ii" },
+    { "scheduleName": "Great Jungle Wurm", "trackType": "worldboss", "apiId": "great_jungle_wurm" },
+    { "scheduleName": "Megadestroyer", "trackType": "worldboss", "apiId": "megadestroyer" },
+    { "scheduleName": "Modniir Ulgoth", "trackType": "worldboss", "apiId": "modniir_ulgoth" },
+    { "scheduleName": "Shadow Behemoth", "trackType": "worldboss", "apiId": "shadow_behemoth" },
+    { "scheduleName": "Svanir Shaman Chief", "trackType": "worldboss", "apiId": "svanir_shaman_chief" },
+    { "scheduleName": "The Shatterer", "trackType": "worldboss", "apiId": "the_shatterer" },
+    { "scheduleName": "Tequatl the Sunless", "trackType": "worldboss", "apiId": "tequatl_the_sunless" },
+    { "scheduleName": "Karka Queen", "trackType": "worldboss", "apiId": "karka_queen" },
+    { "scheduleName": "Evolved Jungle Wurm", "trackType": "worldboss", "apiId": "triple_trouble_wurm", "alsoAppliesTo": ["Amber", "Cobalt", "Crimson"] },
+
+    { "scheduleName": "Night Bosses", "trackType": "mapchest", "apiId": "verdant_brink_heros_choice_chest", "alsoAppliesTo": ["Day: Securing Verdant Brink", "Night: Night and the Enemy"] },
+    { "scheduleName": "Octovine", "trackType": "mapchest", "apiId": "auric_basin_heros_choice_chest", "alsoAppliesTo": ["Pylons", "Challenges", "Reset"] },
+    { "scheduleName": "Chak Gerent", "trackType": "mapchest", "apiId": "tangled_depths_heros_choice_chest", "alsoAppliesTo": ["Help the Outposts", "Prep"] },
+    { "scheduleName": "Start advancing on the Blighting Towers", "trackType": "mapchest", "apiId": "dragons_stand_heros_choice_chest" },
+    { "scheduleName": "Choya Pinata", "trackType": "mapchest", "apiId": "crystal_oasis_heros_choice_chest", "alsoAppliesTo": ["Rounds 1 to 3"] },
+    { "scheduleName": "Doppelganger", "trackType": "mapchest", "apiId": "elon_riverlands_heros_choice_chest", "alsoAppliesTo": ["The Path to Ascension: Augury Rock"] },
+    { "scheduleName": "Maws of Torment", "trackType": "mapchest", "apiId": "the_desolation_heros_choice_chest", "alsoAppliesTo": ["Junundu Rising"] },
+    { "scheduleName": "Forged with Fire", "trackType": "mapchest", "apiId": "domain_of_vabbi_heros_choice_chest", "alsoAppliesTo": ["Serpents' Ire"] },
+    { "scheduleName": "Aetherblade Assault", "trackType": "mapchest", "apiId": "seitung_province_heros_choice_chest" },
+    { "scheduleName": "Kaineng Blackout", "trackType": "mapchest", "apiId": "new_kaineng_city_heros_choice_chest" },
+    { "scheduleName": "Gang War", "trackType": "mapchest", "apiId": "echovald_wilds_heros_choice_chest", "alsoAppliesTo": ["Aspenwood"] },
+    { "scheduleName": "The Battle for the Jade Sea", "trackType": "mapchest", "apiId": "dragons_end_heros_choice_chest", "alsoAppliesTo": ["Preparations", "Jade Maw"] },
+    { "scheduleName": "Unlocking the Wizard's Tower", "trackType": "mapchest", "apiId": "skywatch_archipelago_heros_choice_chest" },
+    { "scheduleName": "The Battle for Amnytas", "trackType": "mapchest", "apiId": "amnytas_heros_choice_chest", "alsoAppliesTo": ["Defense of Amnytas", "The Defense of Amnytas"] },
+    { "scheduleName": "Into the Spider's Lair", "trackType": "mapchest", "apiId": "inner_nayos_heros_choice_chest" },
+    { "scheduleName": "Of Mists and Monsters", "trackType": "mapchest", "apiId": "janthir_syntri_heros_choice_chest" },
+    { "scheduleName": "Convergence: Mount Balrior", "trackType": "mapchest", "apiId": "convergence_mount_balrior_commanders_choice_chest" }
+  ]
+}

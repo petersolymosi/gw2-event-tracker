@@ -1,0 +1,34 @@
+---
+description: Build, deploy, and keep README + manifest in sync after changes
+alwaysApply: true
+---
+
+# Deploy and document after every change
+
+When you finish modifying this project:
+
+## 1. Update docs when features change
+
+If you add, remove, or materially change user-facing behavior, update:
+
+- **`README.md`** — Features, Usage table, Project layout
+- **`manifest.json`** — `description` (shown in Blish module settings)
+
+Keep manifest description concise (1–2 sentences). README can be more detailed.
+
+## 2. Build and deploy
+
+```powershell
+$env:GW2_BLISH_EXE = "C:\Path\To\Blish HUD.exe"   # optional
+.\deploy.ps1
+```
+
+Do not skip deploy unless the build failed and could not be fixed.
+
+**Target:** `%USERPROFILE%\Documents\Guild Wars 2\addons\blishhud\modules\` (or OneDrive Documents if synced)
+
+**Blish exe:** set `GW2_BLISH_EXE` to auto-restart after deploy
+
+## Encoding
+
+If build reports `\0` / UTF-16 errors on `.cs` files, see `.cursor/rules/blish-csharp.mdc`.
