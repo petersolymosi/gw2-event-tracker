@@ -29,6 +29,10 @@ Do not skip deploy unless the build failed and could not be fixed.
 
 **Blish exe:** set `GW2_BLISH_EXE` to auto-restart after deploy
 
+## 3. Releases
+
+For Blish Module Repo publishing: see local `PUBLISH.md` and `SSRD_PROFILE.md` (gitignored).
+
 ## Encoding
 
 If build reports `\0` / UTF-16 errors on `.cs` files, see `.cursor/rules/blish-csharp.mdc`.

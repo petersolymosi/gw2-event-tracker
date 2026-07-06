@@ -70,7 +70,7 @@ desktop.ini
 secrets.json
 deploy.local.ps1
 
-## Local-only (not published)
+## Local-only publishing docs (not on GitHub)
 PUBLISH.md
 publish.ps1
 SSRD_PROFILE.md

@@ -32,3 +32,4 @@ Do not edit `Data/` — it is gitignored; canonical JSON lives under `ref/Data/`
 ## Scripts
 
 - `deploy.ps1` — Debug build + local install + restart Blish
+- `publish.ps1` — Release build to `dist/` (local only, gitignored)

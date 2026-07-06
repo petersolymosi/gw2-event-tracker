@@ -158,6 +158,16 @@ Schedule JSON is embedded in the DLL at build time; `ref/Data/` is also copied i
 - Wiki links resolved from each segment's `link` field (fallback: segment or section name)
 - Map IDs for MumbleLink filtering: static lookup table in `EventMapMapper.cs`
 
+## Blish Module Repo
+
+Install from Blish HUD without building locally:
+
+1. Open **Settings -> Module Repo**
+2. Search for **GW2 Event Tracker**
+3. Install and enable the module
+
+The module is listed in the official [Blish HUD Module Repo](https://blishhud.com/docs/modules/ssrd/overview) after SSRD publication. For manual install, build Release and copy the `.bhm` to your modules folder (see **Install** above), or use `deploy.ps1` for local development.
+
 ## License
 
 MIT — see [LICENSE](LICENSE).
