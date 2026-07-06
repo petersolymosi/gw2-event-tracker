@@ -30,6 +30,6 @@
     { "scheduleName": "The Battle for Amnytas", "trackType": "mapchest", "apiId": "amnytas_heros_choice_chest", "alsoAppliesTo": ["Defense of Amnytas", "The Defense of Amnytas"] },
     { "scheduleName": "Into the Spider's Lair", "trackType": "mapchest", "apiId": "inner_nayos_heros_choice_chest" },
     { "scheduleName": "Of Mists and Monsters", "trackType": "mapchest", "apiId": "janthir_syntri_heros_choice_chest" },
-    { "scheduleName": "Convergence: Mount Balrior", "trackType": "mapchest", "apiId": "convergence_mount_balrior_commanders_choice_chest" }
+    { "scheduleName": "Convergence: Mount Balrior", "trackType": "mapchest", "apiId": "convergence_heros_choice_chest", "alsoAppliesTo": ["Convergences (Public)"] }
   ]
 }

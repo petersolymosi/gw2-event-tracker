@@ -40,10 +40,15 @@ namespace Gw2EventTracker {
         private WindowTab? _progressTab;
         private double _scheduleElapsed;
         private double _progressElapsed;
+        private double _accessRetryElapsed;
+        private int? _lastMapId;
+        private DateTime _lastMapProgressRefreshUtc = DateTime.MinValue;
         private bool _usedRemoteSchedule;
 
-        private const double ProgressRefreshSeconds = 300;
-        private const double UrgentProgressRefreshSeconds = 30;
+        private const double ProgressRefreshSeconds = 60;
+        private const double UrgentProgressRefreshSeconds = 20;
+        private const double MapProgressRefreshSeconds = 30;
+        private const double AccessRetrySeconds = 15;
 
         private Texture2D _textureWatch = null!;
         private Texture2D _textureWatchActive = null!;
@@ -156,6 +161,8 @@ namespace Gw2EventTracker {
 
             base.OnModuleLoaded(e);
             Logger.Info("GW2 Event Tracker loaded with {Count} events.", _scheduleEngine.Events.Count);
+
+            _ = _progressService.RefreshAsync(force: true);
         }
 
         public override IView GetSettingsView() {
@@ -239,6 +246,11 @@ namespace Gw2EventTracker {
             _trackerView?.RefreshList();
         }
 
+        internal async Task ForceRefreshProgressAsync() {
+            await _progressService.RefreshAsync(force: true).ConfigureAwait(false);
+            RefreshProgressUi();
+        }
+
         internal void ShowSetNotificationPositions() {
             var tempSizeSetting = new SettingEntry<Point> {
                 Value = new Point(EventNotification.NotificationWidth, 512)
@@ -268,10 +280,16 @@ namespace Gw2EventTracker {
 
         protected override void Update(GameTime gameTime) {
             var elapsed = gameTime.ElapsedGameTime.TotalSeconds;
+            var utcNow = DateTime.UtcNow;
 
             _scheduleElapsed += elapsed;
             if (_scheduleElapsed >= 5) {
-                _scheduleEngine.Refresh(DateTime.UtcNow);
+                if (_progressService.EnsureUtcDay(utcNow)) {
+                    _moduleSettings.ClearSnoozes();
+                    _ = _progressService.RefreshAsync(force: true);
+                }
+
+                _scheduleEngine.Refresh(utcNow);
                 _alertService.OnScheduleRefreshed();
                 _trackerView?.RefreshList();
                 _dailyProgressView?.RefreshList();
@@ -285,11 +303,50 @@ namespace Gw2EventTracker {
                 : ProgressRefreshSeconds;
 
             if (_progressElapsed >= progressInterval) {
-                _ = _progressService.RefreshAsync(force: _progressService.NeedsUrgentRefresh);
+                _ = _progressService.RefreshAsync(force: true);
                 _progressElapsed = 0;
             }
 
+            if (!_progressService.HasApiAccess) {
+                _accessRetryElapsed += elapsed;
+                if (_accessRetryElapsed >= AccessRetrySeconds) {
+                    _ = _progressService.RefreshAsync(force: true);
+                    _accessRetryElapsed = 0;
+                }
+            } else {
+                _accessRetryElapsed = 0;
+            }
+
+            TryRefreshProgressOnMapChange();
+
             _alertService.Update(elapsed);
+        }
+
+        private void TryRefreshProgressOnMapChange() {
+            if (!GameService.Gw2Mumble.IsAvailable) {
+                return;
+            }
+
+            var mapId = GameService.Gw2Mumble.CurrentMap.Id;
+            if (mapId <= 0) {
+                return;
+            }
+
+            if (_lastMapId == mapId) {
+                return;
+            }
+
+            var isFirstMap = !_lastMapId.HasValue;
+            _lastMapId = mapId;
+
+            var utcNow = DateTime.UtcNow;
+            if (!isFirstMap &&
+                (utcNow - _lastMapProgressRefreshUtc).TotalSeconds < MapProgressRefreshSeconds) {
+                return;
+            }
+
+            _lastMapProgressRefreshUtc = utcNow;
+            _ = _progressService.RefreshAsync(force: true);
         }
 
         protected override void Unload() {
@@ -309,11 +366,14 @@ namespace Gw2EventTracker {
         }
 
         private void OnSubtokenUpdated(object? sender, EventArgs e) {
+            Logger.Info("GW2 API subtoken updated — refreshing daily progress.");
+            _progressService.ResetAccessLogging();
             _ = _progressService.RefreshAsync(force: true);
         }
 
         private void OnDailyReset(object? sender, EventArgs e) {
             Logger.Info("UTC daily reset — clearing snoozes and refreshing progress.");
+            _moduleSettings.NormalizeSnoozesForUtcDay();
             _moduleSettings.ClearSnoozes();
             _progressService.HandleDailyReset();
             RefreshProgressUi();

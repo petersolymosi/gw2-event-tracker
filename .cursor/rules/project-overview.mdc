@@ -24,7 +24,7 @@ Do not edit `Data/` — it is gitignored; canonical JSON lives under `ref/Data/`
 
 ## Key behavior
 
-- **Daily reset** = 00:00 UTC. `EventScheduleEngine.DailyReset` clears snoozes/alerts; `AccountProgressService.HandleDailyReset` clears completion cache and refetches API.
+- **Daily reset** = 00:00 UTC. `EventScheduleEngine.DailyReset` clears snoozes/alerts; `AccountProgressService.EnsureUtcDay` clears completion cache on every UTC day change (also checked during API refresh and the 5s schedule tick).
 - **Remote schedule** loads giovazz89 `events.json`; `EventSchedulePatcher` fixes gaps (e.g. renamed Amnytas meta, Inner Nayos).
 - **Trackable reward names** in `trackable-rewards.json` must match segment names (or use `alsoAppliesTo` aliases).
 - **UI threading**: use `GameService.Overlay.QueueMainThreadUpdate` for UI updates from async/API callbacks.

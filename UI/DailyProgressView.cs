@@ -12,10 +12,11 @@ namespace Gw2EventTracker.UI {
     public sealed class DailyProgressView : Panel {
 
         private const int Pad = 16;
-        private const int HeaderRowHeight = 34;
         private const int CardPadding = 8;
         private const int ColumnGap = 24;
         private const int ScrollbarInset = 24;
+        private const int MinColumnWidth = 180;
+        private const int RowGap = 8;
 
         private readonly AccountProgressService _progressService;
         private readonly EventScheduleEngine _scheduleEngine;
@@ -26,9 +27,11 @@ namespace Gw2EventTracker.UI {
         private readonly Panel _progressFill;
         private readonly FlowPanel _worldBossColumn;
         private readonly FlowPanel _metaColumn;
+        private readonly StandardButton _refreshButton;
         private Label? _apiMessageLabel;
 
         private bool _hideCompleted;
+        private int _columnTop;
         private int _columnWidth;
         private int _cardWidth;
 
@@ -43,7 +46,8 @@ namespace Gw2EventTracker.UI {
             CanScroll = false;
 
             _summaryLabel = new Label {
-                AutoSizeWidth = true,
+                AutoSizeWidth = false,
+                WrapText = true,
                 Parent = this,
                 Location = new Point(Pad, 12)
             };
@@ -70,20 +74,37 @@ namespace Gw2EventTracker.UI {
                 Parent = _progressTrack
             };
 
+            _refreshButton = new StandardButton {
+                Text = "Refresh now",
+                Parent = this
+            };
+            _refreshButton.Click += async (_, __) => {
+                _refreshButton.Enabled = false;
+                _refreshButton.Text = "Refreshing...";
+                try {
+                    await EventTrackerModule.Instance.ForceRefreshProgressAsync().ConfigureAwait(false);
+                    GameService.Overlay.QueueMainThreadUpdate(_ => RefreshList());
+                } finally {
+                    GameService.Overlay.QueueMainThreadUpdate(_ => {
+                        _refreshButton.Enabled = true;
+                        _refreshButton.Text = "Refresh now";
+                    });
+                }
+            };
+
             _worldBossColumn = CreateColumn();
             _metaColumn = CreateColumn();
             _worldBossColumn.Parent = this;
             _metaColumn.Parent = this;
 
             Resized += (_, __) => {
-                LayoutColumns();
+                LayoutChrome();
                 if (_progressService.HasApiAccess) {
                     RefreshList();
                 }
             };
 
-            LayoutColumns();
-            LayoutHeaderRow();
+            LayoutChrome();
             RefreshList();
         }
 
@@ -95,32 +116,51 @@ namespace Gw2EventTracker.UI {
             };
         }
 
-        private void LayoutHeaderRow() {
+        private void LayoutChrome() {
+            var contentWidth = Math.Max(200, Width - Pad * 2);
+
             _hideCompletedCheckbox.Location = new Point(
                 Math.Max(Pad, Width - _hideCompletedCheckbox.Width - Pad),
-                10);
+                12);
 
-            _progressTrack.Width = Math.Max(100, Width - Pad * 2);
-            _progressTrack.Location = new Point(Pad, HeaderRowHeight);
+            var summaryWidth = Math.Max(
+                120,
+                contentWidth - (_hideCompletedCheckbox.Visible ? _hideCompletedCheckbox.Width + RowGap : 0));
+            _summaryLabel.Width = summaryWidth;
+            _summaryLabel.Height = GetSummaryHeight();
+            _summaryLabel.Location = new Point(Pad, 12);
+
+            var y = 12 + _summaryLabel.Height + RowGap;
+
+            if (_progressTrack.Visible) {
+                _progressTrack.Width = contentWidth;
+                _progressTrack.Location = new Point(Pad, y);
+                y = _progressTrack.Bottom + RowGap;
+            }
+
+            _refreshButton.Location = new Point(Pad, y);
+            y = _refreshButton.Bottom + RowGap + 4;
+            _columnTop = y;
+
+            LayoutColumns();
         }
 
         private void LayoutColumns() {
-            LayoutHeaderRow();
+            var columnHeight = Math.Max(100, Height - _columnTop - Pad);
+            var available = Math.Max(MinColumnWidth * 2 + ColumnGap, Width - Pad * 2);
+            _columnWidth = Math.Max(MinColumnWidth, (available - ColumnGap) / 2);
+            _cardWidth = Math.Max(140, _columnWidth - ScrollbarInset);
 
-            var columnTop = HeaderRowHeight + 28;
-            var columnHeight = Math.Max(100, Height - columnTop - Pad);
-            _columnWidth = Math.Max(280, (Width - Pad * 2 - ColumnGap) / 2);
-            _cardWidth = Math.Max(240, _columnWidth - ScrollbarInset);
-
-            _worldBossColumn.Location = new Point(Pad, columnTop);
+            _worldBossColumn.Location = new Point(Pad, _columnTop);
             _worldBossColumn.Size = new Point(_columnWidth, columnHeight);
 
-            _metaColumn.Location = new Point(Pad + _columnWidth + ColumnGap, columnTop);
+            _metaColumn.Location = new Point(Pad + _columnWidth + ColumnGap, _columnTop);
             _metaColumn.Size = new Point(_columnWidth, columnHeight);
         }
 
         public void RefreshList() {
             UpdateSummary();
+
             _worldBossColumn.ClearChildren();
             _metaColumn.ClearChildren();
 
@@ -128,20 +168,22 @@ namespace Gw2EventTracker.UI {
             _metaColumn.Visible = _progressService.HasApiAccess;
             _progressTrack.Visible = _progressService.HasApiAccess;
             _hideCompletedCheckbox.Visible = _progressService.HasApiAccess;
+            _refreshButton.Visible = true;
 
             if (!_progressService.HasApiAccess) {
                 if (_apiMessageLabel == null) {
                     _apiMessageLabel = new Label {
-                        Text = "Add a GW2 API key with account and progression permissions to track daily rewards.",
                         Width = Width - Pad * 2,
-                        Height = 44,
+                        Height = 88,
                         WrapText = true,
                         Parent = this
                     };
                 }
 
-                _apiMessageLabel.Width = Width - Pad * 2;
-                _apiMessageLabel.Location = new Point(Pad, HeaderRowHeight + 40);
+                _apiMessageLabel.Text = _progressService.StatusMessage;
+                _apiMessageLabel.Width = Math.Max(200, Width - Pad * 2);
+                LayoutChrome();
+                _apiMessageLabel.Location = new Point(Pad, _columnTop);
                 _apiMessageLabel.Visible = true;
                 return;
             }
@@ -150,7 +192,7 @@ namespace Gw2EventTracker.UI {
                 _apiMessageLabel.Visible = false;
             }
 
-            LayoutColumns();
+            LayoutChrome();
 
             var statuses = _progressService.GetTrackableRewardStatuses();
             var worldBosses = FilterAndSort(statuses, "worldboss");
@@ -248,6 +290,9 @@ namespace Gw2EventTracker.UI {
             return null;
         }
 
+        private int GetSummaryHeight() =>
+            _progressService.HasApiAccess ? 40 : 22;
+
         private void UpdateSummary() {
             var reset = DailyResetHelper.FormatCountdown(DateTime.UtcNow);
 
@@ -258,8 +303,25 @@ namespace Gw2EventTracker.UI {
             }
 
             var summary = _progressService.GetSummary();
-            _summaryLabel.Text = $"Today: {summary.Completed}/{summary.Trackable} claimed  |  Reset in {reset}";
+            var syncAge = _progressService.LastSuccessfulRefreshUtc is DateTime lastSync
+                ? $"Last synced {HumanizeSyncAge(DateTime.UtcNow - lastSync)}"
+                : "Not synced yet";
+
+            _summaryLabel.Text =
+                $"Today: {summary.Completed}/{summary.Trackable} claimed  |  Reset in {reset}{Environment.NewLine}{syncAge}";
             UpdateProgressBar(summary.Completed, summary.Trackable);
+        }
+
+        private static string HumanizeSyncAge(TimeSpan age) {
+            if (age.TotalSeconds < 60) {
+                return $"{Math.Max(1, (int)age.TotalSeconds)}s ago";
+            }
+
+            if (age.TotalMinutes < 60) {
+                return $"{(int)age.TotalMinutes}m ago";
+            }
+
+            return $"{(int)age.TotalHours}h ago";
         }
 
         private void UpdateProgressBar(int completed, int total) {

@@ -127,6 +127,16 @@ namespace Gw2EventTracker.UI {
             suppress.CheckedChanged += (_, e) => _settings.SuppressCompletedAlerts = e.Checked;
             y = suppress.Bottom + Gap;
 
+            _ = new Label {
+                Text = "Daily reward tracking needs a GW2 API key (account + progression) in Blish settings, plus both permissions enabled for this module under Settings → Modules.",
+                Width = ContentWidth,
+                Height = 48,
+                WrapText = true,
+                Location = new Point(Left, y),
+                Parent = content
+            };
+            y += 56;
+
             var remoteSchedule = new Checkbox {
                 Text = "Fetch latest schedule from giovazz89 on reload",
                 Checked = _settings.UseRemoteSchedule,

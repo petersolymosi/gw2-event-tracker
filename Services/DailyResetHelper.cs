@@ -5,6 +5,12 @@ namespace Gw2EventTracker.Services {
     public static class DailyResetHelper {
 
         /// <summary>GW2 daily reset occurs at 00:00 UTC.</summary>
+        public static DateTime UtcDay(DateTime utcNow) => utcNow.Date;
+
+        public static bool HasUtcDayChanged(DateTime lastUtcMidnight, DateTime utcNow) =>
+            UtcDay(lastUtcMidnight) != UtcDay(utcNow);
+
+        /// <summary>GW2 daily reset occurs at 00:00 UTC.</summary>
         public static DateTime NextResetUtc(DateTime utcNow) => utcNow.Date.AddDays(1);
 
         public static TimeSpan TimeUntilResetUtc(DateTime utcNow) {

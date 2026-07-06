@@ -583,7 +583,8 @@ namespace Gw2EventTracker.UI {
                 : $"What should I do next? {recommendation.Event.DisplayLabel} — {recommendation.Reason}";
 
             if (!_progressService.HasApiAccess) {
-                _summaryLabel.Text = $"{recommendLine}{Environment.NewLine}Add a GW2 API key with account permissions to track daily rewards. Reset in {reset}.";
+                _summaryLabel.Text =
+                    $"{recommendLine}{Environment.NewLine}{_progressService.StatusMessage} Reset in {reset}.";
                 return;
             }
 

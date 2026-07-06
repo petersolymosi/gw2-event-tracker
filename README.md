@@ -73,8 +73,8 @@ dotnet test Gw2EventTracker.Tests\Gw2EventTracker.Tests.csproj -c Debug -p:Platf
 1. Copy the `.bhm` file to your Blish HUD modules folder:
    - `%USERPROFILE%\Documents\Guild Wars 2\addons\blishhud\modules\`
    - Or `%OneDrive%\Documents\Guild Wars 2\addons\blishhud\modules\` if OneDrive syncs Documents
-2. Enable **GW2 Event Tracker** in Blish HUD 뿯↽ Settings 뿯↽ Modules
-3. Add a GW2 API key in Blish HUD settings (optional)
+2. Enable **GW2 Event Tracker** in Blish HUD -> Settings -> Modules
+3. For daily completion tracking: add a GW2 API key in Blish HUD (account + progression scopes), then enable both API permissions for this module under Settings -> Modules
 
 After enabling, use the **Event Tracker** and **Daily Progress** tabs in the Blish HUD sidebar.
 

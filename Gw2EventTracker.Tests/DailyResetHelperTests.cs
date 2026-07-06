@@ -41,6 +41,21 @@ namespace Gw2EventTracker.Tests {
 
             Assert.Equal("9m 45s", text);
         }
+
+        [Fact]
+        public void HasUtcDayChanged_ReturnsFalseForSameUtcDay() {
+            var day = new DateTime(2026, 7, 6, 12, 0, 0, DateTimeKind.Utc);
+
+            Assert.False(DailyResetHelper.HasUtcDayChanged(day, day.AddHours(6)));
+        }
+
+        [Fact]
+        public void HasUtcDayChanged_ReturnsTrueAcrossUtcMidnight() {
+            var before = new DateTime(2026, 7, 6, 23, 59, 0, DateTimeKind.Utc);
+            var after = new DateTime(2026, 7, 7, 0, 1, 0, DateTimeKind.Utc);
+
+            Assert.True(DailyResetHelper.HasUtcDayChanged(before, after));
+        }
     }
 
 }
