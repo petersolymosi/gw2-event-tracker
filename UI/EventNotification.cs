@@ -6,7 +6,7 @@ using Microsoft.Xna.Framework;
 
 namespace Ghost.Gw2EventTracker.UI {
 
-    internal sealed class EventNotification : NotificationCard {
+    internal sealed class EventNotification : SnoozeNotificationCard {
 
         public const int NotificationWidth = NotificationCard.CardWidth;
         public const int NotificationHeight = NotificationCard.CardHeight;
@@ -14,7 +14,7 @@ namespace Ghost.Gw2EventTracker.UI {
 
         private static int _visibleNotifications;
 
-        private readonly string _eventKey;
+        private readonly string _waypoint;
 
         private EventNotification(
             string eventKey,
@@ -22,29 +22,30 @@ namespace Ghost.Gw2EventTracker.UI {
             AsyncTexture2D icon,
             string message,
             string waypoint)
-            : base(title, icon, message, "Left click: copy waypoint. Right click: snooze until daily reset.") {
-            _eventKey = eventKey;
+            : base(
+                eventKey,
+                title,
+                icon,
+                message,
+                "Left click: copy waypoint. Snooze button: silence until daily reset.") {
+            _waypoint = waypoint;
             Opacity = 0f;
             Location = new Point(
                 EventTrackerModule.Instance.NotificationPosition.X,
                 EventTrackerModule.Instance.NotificationPosition.Y + (NotificationHeight + NotificationStackSpacing) * _visibleNotifications);
 
             _visibleNotifications++;
-
-            RightMouseButtonReleased += (_, __) => {
-                EventTrackerModule.Instance.SnoozeEvent(_eventKey);
-                Dispose();
-            };
-            LeftMouseButtonReleased += (_, __) => {
-                if (!string.IsNullOrWhiteSpace(waypoint)) {
-                    CopyWaypoint(waypoint);
-                }
-
-                Dispose();
-            };
         }
 
-        protected override CaptureType CapturesInput() => CaptureType.Mouse;
+        protected override void OnSnoozed() => Dispose();
+
+        protected override void OnCardClicked() {
+            if (!string.IsNullOrWhiteSpace(_waypoint)) {
+                CopyWaypoint(_waypoint);
+            }
+
+            Dispose();
+        }
 
         private void Show(float duration) {
             if (EventTrackerModule.Instance.ChimeEnabled) {

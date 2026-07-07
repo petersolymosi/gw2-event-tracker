@@ -1,20 +1,13 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Ghost.Gw2EventTracker.Models;
-using Newtonsoft.Json;
 
 namespace Ghost.Gw2EventTracker.Services {
 
     public sealed class TrackableRewardsCatalog {
 
         private readonly Dictionary<string, TrackableRewardDefinition> _byScheduleName;
-
-        public TrackableRewardsCatalog(string jsonPath) : this(
-            JsonConvert.DeserializeObject<TrackableRewardsFile>(File.ReadAllText(jsonPath))
-            ?? new TrackableRewardsFile()) {
-        }
 
         public TrackableRewardsCatalog(TrackableRewardsFile file) {
             _byScheduleName = new Dictionary<string, TrackableRewardDefinition>(StringComparer.OrdinalIgnoreCase);
@@ -33,10 +26,6 @@ namespace Ghost.Gw2EventTracker.Services {
             }
 
             _byScheduleName[name] = definition;
-        }
-
-        public bool TryGet(string scheduleName, out TrackableRewardDefinition definition) {
-            return _byScheduleName.TryGetValue(scheduleName, out definition!);
         }
 
         public bool MatchesScheduleName(string scheduleName, TrackableRewardDefinition definition) {

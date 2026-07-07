@@ -306,9 +306,17 @@ namespace Ghost.Gw2EventTracker.UI {
                     watchSetting.Value = watchButton.Checked;
                 };
 
-                card.RightMouseButtonReleased += (_, __) => {
+                var snoozeButton = new StandardButton {
+                    Text = "Snooze",
+                    Width = SnoozeNotificationCard.ActionButtonWidth,
+                    Height = SnoozeNotificationCard.ActionButtonHeight,
+                    BasicTooltipText = "Snooze alerts until daily reset.",
+                    Parent = card
+                };
+                snoozeButton.Click += (_, __) => {
                     EventTrackerModule.Instance.SnoozeEvent(tracked.Key);
                 };
+
                 card.BasicTooltipText = BuildCardTooltip(tracked);
 
                 var mapStripe = new Panel {
@@ -324,6 +332,7 @@ namespace Ghost.Gw2EventTracker.UI {
                     timeLabel,
                     completionLabel,
                     watchButton,
+                    snoozeButton,
                     wikiButton,
                     waypointButton,
                     accentPanel,
@@ -331,6 +340,7 @@ namespace Ghost.Gw2EventTracker.UI {
                 UpdateCompletionLabel(completionLabel, tracked);
                 card.Resized += (_, __) => LayoutCardActions(eventCard);
                 watchButton.Resized += (_, __) => LayoutCardActions(eventCard);
+                snoozeButton.Resized += (_, __) => LayoutCardActions(eventCard);
                 if (wikiButton != null) {
                     wikiButton.Resized += (_, __) => LayoutCardActions(eventCard);
                 }
@@ -400,7 +410,7 @@ namespace Ghost.Gw2EventTracker.UI {
                 var tracked = _scheduleEngine.Events.First(e => e.Key == card.Key);
                 card.Button.Text = tracked.DisplayLabel;
                 card.Button.BasicTooltipText = BuildCardTooltip(tracked);
-                card.TimeLabel.Text = FormatStatusTime(tracked);
+                card.TimeLabel.Text = FormatTime(tracked);
                 card.TimeLabel.TextColor = tracked.IsActive ? new Color(255, 220, 100) : Color.White;
                 card.TimeLabel.BasicTooltipText = GetTimeDetails(tracked);
                 UpdateCompletionLabel(card.CompletionLabel, tracked);
@@ -600,7 +610,7 @@ namespace Ghost.Gw2EventTracker.UI {
                 lines.Add(rewardsText);
             }
 
-            lines.Add("Right click: snooze alerts until daily reset.");
+            lines.Add("Use the snooze button to silence alerts until daily reset.");
 
             return string.Join(Environment.NewLine + Environment.NewLine, lines.Where(line => !string.IsNullOrWhiteSpace(line)));
         }
@@ -612,8 +622,6 @@ namespace Ghost.Gw2EventTracker.UI {
 
             return GameService.Content.GetRenderServiceTexture(tracked.IconUrl);
         }
-
-        private static string FormatStatusTime(TrackedEvent tracked) => FormatTime(tracked);
 
         private static void UpdateCompletionLabel(Label completionLabel, TrackedEvent tracked) {
             switch (tracked.CompletionState) {
@@ -656,6 +664,10 @@ namespace Ghost.Gw2EventTracker.UI {
             card.WatchButton.Top = actionTop;
             card.WatchButton.Left = rightEdge - card.WatchButton.Width;
             rightEdge = card.WatchButton.Left - 4;
+
+            card.SnoozeButton.Top = actionTop;
+            card.SnoozeButton.Left = rightEdge - card.SnoozeButton.Width;
+            rightEdge = card.SnoozeButton.Left - 4;
 
             if (card.CompletionLabel.Visible) {
                 card.CompletionLabel.Top = actionTop;
@@ -750,6 +762,7 @@ namespace Ghost.Gw2EventTracker.UI {
                 Label timeLabel,
                 Label completionLabel,
                 GlowButton watchButton,
+                StandardButton snoozeButton,
                 GlowButton? wikiButton,
                 GlowButton? waypointButton,
                 Panel? accentPanel,
@@ -759,6 +772,7 @@ namespace Ghost.Gw2EventTracker.UI {
                 TimeLabel = timeLabel;
                 CompletionLabel = completionLabel;
                 WatchButton = watchButton;
+                SnoozeButton = snoozeButton;
                 WikiButton = wikiButton;
                 WaypointButton = waypointButton;
                 AccentPanel = accentPanel;
@@ -770,6 +784,7 @@ namespace Ghost.Gw2EventTracker.UI {
             public Label TimeLabel { get; }
             public Label CompletionLabel { get; }
             public GlowButton WatchButton { get; }
+            public StandardButton SnoozeButton { get; }
             public GlowButton? WikiButton { get; }
             public GlowButton? WaypointButton { get; }
             public Panel? AccentPanel { get; }

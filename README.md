@@ -12,7 +12,7 @@ Standalone [Blish HUD](https://blishhud.com/) module for Guild Wars 2. Tracks me
 - **Remote schedule** — optional fetch of the latest `events.json` from GitHub on module reload
 - **Lead-time alerts** — configurable minutes-before-start (default 15, 10, 5)
 - **Event-started alerts** — notify when a watched event becomes active
-- **Snooze** — right-click a notification or event card to snooze until daily reset
+- **Snooze** — use the snooze button on a notification or event card to silence alerts until daily reset
 - **Smart filtering** — suppress alerts for events whose daily reward is already claimed
 
 ### Event Tracker tab
@@ -102,7 +102,7 @@ If `GW2_BLISH_EXE` is not set, the module is still copied; start Blish HUD manua
 | Wiki / waypoint buttons | Open wiki page or copy chat link |
 | `[x]` / `[ ]` | Daily reward claimed / not yet claimed |
 | Eye button | Toggle notifications for that event |
-| Right-click card | Snooze alerts until daily reset |
+| Snooze button | Snooze alerts until daily reset |
 
 The summary bar shows daily reward progress, reset countdown, and a **What should I do next?** suggestion.
 

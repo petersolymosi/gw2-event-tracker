@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using Ghost.Gw2EventTracker.Models;
-using Newtonsoft.Json;
 
 namespace Ghost.Gw2EventTracker.Services {
 
@@ -14,13 +12,6 @@ namespace Ghost.Gw2EventTracker.Services {
         private DateTime _lastUtcMidnight = DateTime.MinValue;
 
         public IReadOnlyList<TrackedEvent> Events => _events;
-
-        public IReadOnlyList<EventSectionDefinition> Sections => _sections;
-
-        public EventScheduleEngine(string eventsJsonPath) : this(
-            JsonConvert.DeserializeObject<List<EventSectionDefinition>>(File.ReadAllText(eventsJsonPath))
-            ?? new List<EventSectionDefinition>()) {
-        }
 
         public EventScheduleEngine(IReadOnlyList<EventSectionDefinition> sections)
             : this(sections, refreshOnLoad: true) {
@@ -93,13 +84,6 @@ namespace Ghost.Gw2EventTracker.Services {
                     }
                 }
             }
-        }
-
-        public IEnumerable<TrackedEvent> GetUpcoming(double hours) {
-            var utcNow = DateTime.UtcNow;
-            return _events
-                .Where(e => e.NextStartUtc >= utcNow && e.NextStartUtc <= utcNow.AddHours(hours))
-                .OrderBy(e => e.NextStartUtc);
         }
 
         private static IEnumerable<ScheduleOccurrence> EnumerateOccurrences(

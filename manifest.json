@@ -4,9 +4,9 @@
   "namespace": "ghost.gw2eventtracker",
   "package": "Gw2EventTracker.dll",
   "manifest_version": 1,
-  "description": "Track meta and world boss schedules, get lead-time and event-started alerts, and see which daily rewards you have already claimed. Includes a Next Up overlay, Daily Progress tab, map-aware filtering, custom event profiles, and a what-should-I-do-next recommender. Schedules from giovazz89 timer data with optional remote updates.",
+  "description": "Track meta and world boss schedules with alerts, daily reward progress, a Next Up overlay, and map-aware filtering.",
   "dependencies": {
-    "bh.blishhud": ">=1.0.0"
+    "bh.blishhud": "~1.3.0"
   },
   "url": "https://github.com/petersolymosi/gw2-event-tracker",
   "api_permissions": {

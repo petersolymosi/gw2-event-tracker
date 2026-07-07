@@ -162,6 +162,8 @@ namespace Ghost.Gw2EventTracker {
 
         internal void SnoozeEvent(string eventKey) {
             _moduleSettings.SnoozeUntilReset(eventKey);
+            _overlayWidget?.Refresh();
+            _trackerView?.RefreshList();
             ScreenNotification.ShowNotification("Snoozed until daily reset.", duration: 2);
         }
 
@@ -310,6 +312,8 @@ namespace Ghost.Gw2EventTracker {
 
             TryRefreshProgressOnMapChange();
 
+            _overlayWidget?.UpdateVisibility();
+
             _alertService.Update(elapsed);
         }
 
@@ -343,15 +347,28 @@ namespace Ghost.Gw2EventTracker {
         protected override void Unload() {
             Gw2ApiManager.SubtokenUpdated -= OnSubtokenUpdated;
 
+            if (_scheduleEngine != null) {
+                _scheduleEngine.DailyReset -= OnDailyReset;
+            }
+
             if (_tab != null) {
                 GameService.Overlay.BlishHudWindow.RemoveTab(_tab);
+                _tab = null;
             }
 
             if (_progressTab != null) {
                 GameService.Overlay.BlishHudWindow.RemoveTab(_progressTab);
+                _progressTab = null;
             }
 
+            _trackerView?.Dispose();
+            _trackerView = null;
+
+            _dailyProgressView?.Dispose();
+            _dailyProgressView = null;
+
             _overlayWidget?.Dispose();
+            _overlayWidget = null;
 
             Instance = null!;
         }

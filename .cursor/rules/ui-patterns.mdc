@@ -31,5 +31,5 @@ Wrap `Menu` in a `Panel` with `CanScroll = true` and set explicit `menu.Height =
 
 ## Notifications
 
-- Right-click notification or event card → snooze until UTC daily reset.
+- Snooze button on notification, event card, or Next Up overlay → snooze until UTC daily reset.
 - Snoozes are scoped to current UTC date (`ModuleSettings._snoozeUtcDate`).

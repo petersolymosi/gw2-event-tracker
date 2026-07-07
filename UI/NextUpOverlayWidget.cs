@@ -30,13 +30,20 @@ namespace Ghost.Gw2EventTracker.UI {
             Refresh();
         }
 
+        protected override CaptureType CapturesInput() => CaptureType.Mouse;
+
         public static int CalculateHeight(int rowCount) {
             var rows = Math.Max(1, rowCount);
             return rows * NotificationCard.CardHeight + Math.Max(0, rows - 1) * NotificationCard.CardSpacing;
         }
 
         public void Refresh() {
-            Visible = _settings.OverlayEnabled;
+            if (!_settings.OverlayEnabled || !ShouldShowOverlay()) {
+                Visible = false;
+                return;
+            }
+
+            Visible = true;
             Opacity = _settings.OverlayOpacity;
             Location = _settings.OverlayPosition;
 
@@ -46,14 +53,17 @@ namespace Ghost.Gw2EventTracker.UI {
             var maxEvents = _settings.OverlayMaxEvents;
             var entries = new List<(TrackedEvent Event, bool IsActive)>();
 
-            foreach (var tracked in _scheduleEngine.Events.Where(e => e.IsWatched && e.IsActive).OrderBy(e => e.NextEndUtc).Take(maxEvents)) {
+            foreach (var tracked in _scheduleEngine.Events
+                .Where(e => e.IsWatched && e.IsActive && !_settings.IsSnoozed(e.Key))
+                .OrderBy(e => e.NextEndUtc)
+                .Take(maxEvents)) {
                 entries.Add((tracked, isActive: true));
             }
 
             var remaining = maxEvents - entries.Count;
             if (remaining > 0) {
                 foreach (var tracked in _scheduleEngine.Events
-                    .Where(e => e.IsWatched && !e.IsActive && e.NextStartUtc > utcNow)
+                    .Where(e => e.IsWatched && !e.IsActive && e.NextStartUtc > utcNow && !_settings.IsSnoozed(e.Key))
                     .OrderBy(e => e.NextStartUtc)
                     .Take(remaining)) {
                     entries.Add((tracked, isActive: false));
@@ -74,7 +84,8 @@ namespace Ghost.Gw2EventTracker.UI {
             var y = 0;
             foreach (var (tracked, isActive) in entries) {
                 var (title, message) = FormatCardText(tracked, isActive);
-                var card = new NotificationCard(
+                var card = new SnoozeNotificationCard(
+                    tracked.Key,
                     title,
                     ResolveEventIcon(tracked),
                     message,
@@ -87,6 +98,20 @@ namespace Ghost.Gw2EventTracker.UI {
             }
 
             Size = new Point(WidgetWidth, Math.Max(NotificationCard.CardHeight, y - NotificationCard.CardSpacing));
+        }
+
+        public void UpdateVisibility() {
+            if (!_settings.OverlayEnabled) {
+                Visible = false;
+                return;
+            }
+
+            Visible = ShouldShowOverlay();
+        }
+
+        private static bool ShouldShowOverlay() {
+            return GameService.GameIntegration.Gw2Instance.IsInGame
+                && !GameService.Gw2Mumble.UI.IsMapOpen;
         }
 
         private static (string Title, string Message) FormatCardText(TrackedEvent tracked, bool isActive) {

@@ -201,7 +201,7 @@ namespace Ghost.Gw2EventTracker.UI {
             y = leadTimes.Bottom + Gap;
 
             _ = new Label {
-                Text = "Default: 15,10,5 — alerts fire when an event is within those minute windows. Right-click a notification or event card to snooze until UTC midnight reset.",
+                Text = "Default: 15,10,5 — alerts fire when an event is within those minute windows. Use the snooze button on notifications or event cards to silence alerts until UTC midnight reset.",
                 Width = ContentWidth,
                 Height = 52,
                 WrapText = true,
