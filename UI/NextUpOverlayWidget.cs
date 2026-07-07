@@ -4,13 +4,13 @@ using System.Linq;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
-using Gw2EventTracker.Models;
-using Gw2EventTracker.Services;
+using Ghost.Gw2EventTracker.Models;
+using Ghost.Gw2EventTracker.Services;
 using Humanizer;
 using Humanizer.Localisation;
 using Microsoft.Xna.Framework;
 
-namespace Gw2EventTracker.UI {
+namespace Ghost.Gw2EventTracker.UI {
 
     public sealed class NextUpOverlayWidget : Container {
 
@@ -126,7 +126,7 @@ namespace Gw2EventTracker.UI {
             if (tracked == null
                 || tracked.Category == "Day-Night Cycle"
                 || string.IsNullOrWhiteSpace(tracked.IconUrl)) {
-                return new AsyncTexture2D(GameService.Content.GetTexture("102377"));
+                return ModuleTextures.DefaultEventIcon;
             }
 
             return GameService.Content.GetRenderServiceTexture(tracked.IconUrl);

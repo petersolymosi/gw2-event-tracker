@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Blish_HUD;
-using Gw2EventTracker.Models;
+using Ghost.Gw2EventTracker.Models;
 using Newtonsoft.Json;
 
-namespace Gw2EventTracker.Services {
+namespace Ghost.Gw2EventTracker.Services {
 
     public static class EventScheduleLoader {
 

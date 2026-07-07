@@ -1,7 +1,7 @@
 using Blish_HUD.Settings;
 using Microsoft.Xna.Framework;
 
-namespace Gw2EventTracker.UI {
+namespace Ghost.Gw2EventTracker.UI {
 
     internal sealed class ScreenRegion {
 

@@ -2,12 +2,12 @@ using System;
 using System.Linq;
 using Blish_HUD;
 using Blish_HUD.Content;
-using Gw2EventTracker.Models;
-using Gw2EventTracker.UI;
+using Ghost.Gw2EventTracker.Models;
+using Ghost.Gw2EventTracker.UI;
 using Humanizer;
 using Humanizer.Localisation;
 
-namespace Gw2EventTracker.Services {
+namespace Ghost.Gw2EventTracker.Services {
 
     public sealed class AlertService {
 
@@ -122,7 +122,7 @@ namespace Gw2EventTracker.Services {
 
         private static void ShowNotification(TrackedEvent tracked, string message) {
             AsyncTexture2D icon = string.IsNullOrWhiteSpace(tracked.IconUrl)
-                ? new AsyncTexture2D(GameService.Content.GetTexture("102377"))
+                ? ModuleTextures.DefaultEventIcon
                 : GameService.Content.GetRenderServiceTexture(tracked.IconUrl);
 
             EventNotification.ShowNotification(

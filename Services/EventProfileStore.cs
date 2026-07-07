@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Blish_HUD.Settings;
-using Gw2EventTracker.Models;
+using Ghost.Gw2EventTracker.Models;
 using Newtonsoft.Json;
 
-namespace Gw2EventTracker.Services {
+namespace Ghost.Gw2EventTracker.Services {
 
     public sealed class EventProfile {
 

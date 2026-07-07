@@ -1,8 +1,8 @@
 using System;
-using Gw2EventTracker.Services;
+using Ghost.Gw2EventTracker.Services;
 using Xunit;
 
-namespace Gw2EventTracker.Tests {
+namespace Ghost.Gw2EventTracker.Tests {
 
     public sealed class DailyResetHelperTests {
 

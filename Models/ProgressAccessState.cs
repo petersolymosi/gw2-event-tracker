@@ -1,4 +1,4 @@
-namespace Gw2EventTracker.Models {
+namespace Ghost.Gw2EventTracker.Models {
 
     public enum ProgressAccessState {
         /// <summary>No GW2 API key or module subtoken yet.</summary>

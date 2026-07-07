@@ -24,7 +24,7 @@ if ($env:OneDrive -and (Test-Path (Split-Path $oneDriveModules -Parent))) {
 New-Item -ItemType Directory -Force -Path $modulesDir | Out-Null
 
 $bhm = Join-Path $projectRoot "bin\x64\Debug\Gw2EventTracker.bhm"
-$dest = Join-Path $modulesDir "gw2eventtracker_0.1.0.bhm"
+$dest = Join-Path $modulesDir "ghost.gw2eventtracker_0.1.1.bhm"
 
 $blish = Get-Process -Name "Blish HUD" -ErrorAction SilentlyContinue
 if ($blish) {

@@ -6,14 +6,13 @@ using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
 using Blish_HUD.Settings;
-using Gw2EventTracker.Models;
-using Gw2EventTracker.Services;
+using Ghost.Gw2EventTracker.Models;
+using Ghost.Gw2EventTracker.Services;
 using Humanizer;
 using Humanizer.Localisation;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 
-namespace Gw2EventTracker.UI {
+namespace Ghost.Gw2EventTracker.UI {
 
     public sealed class EventTrackerView : Panel {
 
@@ -27,8 +26,6 @@ namespace Gw2EventTracker.UI {
         private readonly EventProfileStore _profileStore;
         private readonly SettingCollection _watchSettings;
         private readonly AchievementInfoCache _achievementCache;
-        private readonly Texture2D _textureWatch;
-        private readonly Texture2D _textureWatchActive;
 
         private readonly Dropdown _sortDropdown;
         private readonly Dropdown _profileDropdown;
@@ -46,17 +43,13 @@ namespace Gw2EventTracker.UI {
             ModuleSettings settings,
             EventProfileStore profileStore,
             SettingCollection watchSettings,
-            AchievementInfoCache achievementCache,
-            Texture2D textureWatch,
-            Texture2D textureWatchActive) {
+            AchievementInfoCache achievementCache) {
             _scheduleEngine = scheduleEngine;
             _progressService = progressService;
             _settings = settings;
             _profileStore = profileStore;
             _watchSettings = watchSettings;
             _achievementCache = achievementCache;
-            _textureWatch = textureWatch;
-            _textureWatchActive = textureWatchActive;
 
             CanScroll = false;
             Size = bounds.Size;
@@ -270,10 +263,9 @@ namespace Gw2EventTracker.UI {
 
                 GlowButton? wikiButton = null;
                 if (!string.IsNullOrWhiteSpace(tracked.WikiUrl)) {
-                    wikiButton = new GlowButton {
-                        Icon = GameService.Content.GetTexture("102530"),
-                        ActiveIcon = GameService.Content.GetTexture("glow-wiki"),
-                        BasicTooltipText = "Read about this event on the wiki.",
+                wikiButton = new GlowButton {
+                    Icon = ModuleTextures.WikiIcon,
+                    BasicTooltipText = "Read about this event on the wiki.",
                         Parent = card,
                         GlowColor = Color.White * 0.1f
                     };
@@ -283,8 +275,8 @@ namespace Gw2EventTracker.UI {
                 GlowButton? waypointButton = null;
                 if (!string.IsNullOrWhiteSpace(tracked.ChatLink)) {
                     waypointButton = new GlowButton {
-                        Icon = GameService.Content.GetTexture("waypoint"),
-                        ActiveIcon = GameService.Content.GetTexture("glow-waypoint"),
+                        Icon = ModuleTextures.WaypointIcon,
+                        ActiveIcon = ModuleTextures.WaypointHoverIcon,
                         BasicTooltipText = $"Nearby waypoint: {tracked.ChatLink}",
                         Parent = card,
                         GlowColor = Color.White * 0.1f
@@ -302,8 +294,8 @@ namespace Gw2EventTracker.UI {
                 };
 
                 var watchButton = new GlowButton {
-                    Icon = _textureWatch,
-                    ActiveIcon = _textureWatchActive,
+                    Icon = ModuleTextures.WatchOffIcon,
+                    ActiveIcon = ModuleTextures.WatchOnIcon,
                     BasicTooltipText = "Click to toggle tracking for this event.",
                     ToggleGlow = true,
                     Checked = tracked.IsWatched,
@@ -615,7 +607,7 @@ namespace Gw2EventTracker.UI {
 
         private static AsyncTexture2D ResolveCardIcon(TrackedEvent tracked) {
             if (tracked.Category == "Day-Night Cycle" || string.IsNullOrWhiteSpace(tracked.IconUrl)) {
-                return new AsyncTexture2D(GameService.Content.GetTexture("102377"));
+                return ModuleTextures.DefaultEventIcon;
             }
 
             return GameService.Content.GetRenderServiceTexture(tracked.IconUrl);

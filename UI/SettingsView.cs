@@ -1,10 +1,10 @@
 using System;
 using Blish_HUD.Controls;
 using Blish_HUD.Graphics.UI;
-using Gw2EventTracker.Services;
+using Ghost.Gw2EventTracker.Services;
 using Microsoft.Xna.Framework;
 
-namespace Gw2EventTracker.UI {
+namespace Ghost.Gw2EventTracker.UI {
 
     public sealed class SettingsView : View {
 

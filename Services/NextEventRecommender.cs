@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Gw2EventTracker.Models;
+using Ghost.Gw2EventTracker.Models;
 
-namespace Gw2EventTracker.Services {
+namespace Ghost.Gw2EventTracker.Services {
 
     public sealed class RecommenderResult {
         public TrackedEvent Event { get; set; } = null!;

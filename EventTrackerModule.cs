@@ -8,14 +8,13 @@ using Blish_HUD.Graphics.UI;
 using Blish_HUD.Modules;
 using Blish_HUD.Modules.Managers;
 using Blish_HUD.Settings;
-using Gw2EventTracker.Models;
-using Gw2EventTracker.Services;
-using Gw2EventTracker.UI;
+using Ghost.Gw2EventTracker.Models;
+using Ghost.Gw2EventTracker.Services;
+using Ghost.Gw2EventTracker.UI;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Newtonsoft.Json;
 
-namespace Gw2EventTracker {
+namespace Ghost.Gw2EventTracker {
 
     [Export(typeof(Module))]
     public class EventTrackerModule : Module {
@@ -49,9 +48,6 @@ namespace Gw2EventTracker {
         private const double UrgentProgressRefreshSeconds = 20;
         private const double MapProgressRefreshSeconds = 30;
         private const double AccessRetrySeconds = 15;
-
-        private Texture2D _textureWatch = null!;
-        private Texture2D _textureWatchActive = null!;
 
         internal ContentsManager ContentsManager => ModuleParameters.ContentsManager;
         internal Gw2ApiManager Gw2ApiManager => ModuleParameters.Gw2ApiManager;
@@ -100,9 +96,6 @@ namespace Gw2EventTracker {
             _usedRemoteSchedule = loadResult.UsedRemote;
             Logger.Info("Schedule source: {Source}.", loadResult.UsedRemote ? "remote" : "embedded");
 
-            _textureWatch = ContentsManager.GetTexture("textures/605021.png");
-            _textureWatchActive = ContentsManager.GetTexture("textures/605019.png");
-
             _rewardsCatalog = new TrackableRewardsCatalog(rewardsFile);
             _scheduleEngine = new EventScheduleEngine(loadResult.Sections);
             _scheduleEngine.DailyReset += OnDailyReset;
@@ -127,9 +120,7 @@ namespace Gw2EventTracker {
                 _moduleSettings,
                 _profileStore,
                 _watchSettings,
-                _achievementCache,
-                _textureWatch,
-                _textureWatchActive);
+                _achievementCache);
 
             _dailyProgressView = new DailyProgressView(contentRegion, _progressService, _scheduleEngine);
 
@@ -139,12 +130,12 @@ namespace Gw2EventTracker {
 
             _tab = GameService.Overlay.BlishHudWindow.AddTab(
                 "Event Tracker",
-                ContentsManager.GetTexture("textures/1466345.png"),
+                ModuleTextures.TabIcon,
                 _trackerView);
 
             _progressTab = GameService.Overlay.BlishHudWindow.AddTab(
                 "Daily Progress",
-                ContentsManager.GetTexture("textures/605021.png"),
+                ModuleTextures.WatchOffIcon,
                 _dailyProgressView);
 
             _progressService.ApplyCompletionStates(_scheduleEngine.Events);

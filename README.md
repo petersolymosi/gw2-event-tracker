@@ -80,7 +80,7 @@ After enabling, use the **Event Tracker** and **Daily Progress** tabs in the Bli
 
 ## Deploy (local dev)
 
-`deploy.ps1` builds Debug, copies to the modules folder as `gw2eventtracker_0.1.0.bhm`, and optionally restarts Blish HUD:
+`deploy.ps1` builds Debug, copies to the modules folder as `ghost.gw2eventtracker_0.1.1.bhm`, and optionally restarts Blish HUD:
 
 ```powershell
 $env:GW2_BLISH_EXE = "C:\Path\To\Blish HUD.exe"

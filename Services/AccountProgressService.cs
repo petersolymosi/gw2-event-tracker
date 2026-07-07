@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Modules.Managers;
-using Gw2EventTracker.Models;
+using Ghost.Gw2EventTracker.Models;
 using Gw2Sharp.WebApi.V2.Models;
 
-namespace Gw2EventTracker.Services {
+namespace Ghost.Gw2EventTracker.Services {
 
     public sealed class AccountProgressService {
 

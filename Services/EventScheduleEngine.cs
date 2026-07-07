@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Gw2EventTracker.Models;
+using Ghost.Gw2EventTracker.Models;
 using Newtonsoft.Json;
 
-namespace Gw2EventTracker.Services {
+namespace Ghost.Gw2EventTracker.Services {
 
     public sealed class EventScheduleEngine {
 

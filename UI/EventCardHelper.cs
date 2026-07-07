@@ -3,10 +3,11 @@ using System.Diagnostics;
 using Blish_HUD;
 using Blish_HUD.Content;
 using Blish_HUD.Controls;
-using Gw2EventTracker.Models;
+using Ghost.Gw2EventTracker.Models;
+using Ghost.Gw2EventTracker.Services;
 using Microsoft.Xna.Framework;
 
-namespace Gw2EventTracker.UI {
+namespace Ghost.Gw2EventTracker.UI {
 
     internal sealed class DailyRewardCard {
 
@@ -54,8 +55,7 @@ namespace Gw2EventTracker.UI {
 
             if (tracked != null && !string.IsNullOrWhiteSpace(tracked.WikiUrl)) {
                 wikiButton = new GlowButton {
-                    Icon = GameService.Content.GetTexture("102530"),
-                    ActiveIcon = GameService.Content.GetTexture("glow-wiki"),
+                    Icon = ModuleTextures.WikiIcon,
                     BasicTooltipText = "Read about this event on the wiki.",
                     Parent = card,
                     GlowColor = Color.White * 0.1f
@@ -65,8 +65,8 @@ namespace Gw2EventTracker.UI {
 
             if (tracked != null && !string.IsNullOrWhiteSpace(tracked.ChatLink)) {
                 waypointButton = new GlowButton {
-                    Icon = GameService.Content.GetTexture("waypoint"),
-                    ActiveIcon = GameService.Content.GetTexture("glow-waypoint"),
+                    Icon = ModuleTextures.WaypointIcon,
+                    ActiveIcon = ModuleTextures.WaypointHoverIcon,
                     BasicTooltipText = $"Nearby waypoint: {tracked.ChatLink}",
                     Parent = card,
                     GlowColor = Color.White * 0.1f
@@ -124,7 +124,7 @@ namespace Gw2EventTracker.UI {
             if (tracked == null
                 || tracked.Category == "Day-Night Cycle"
                 || string.IsNullOrWhiteSpace(tracked.IconUrl)) {
-                return new AsyncTexture2D(GameService.Content.GetTexture("102377"));
+                return ModuleTextures.DefaultEventIcon;
             }
 
             return GameService.Content.GetRenderServiceTexture(tracked.IconUrl);

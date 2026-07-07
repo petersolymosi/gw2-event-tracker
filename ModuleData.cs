@@ -1,7 +1,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Gw2EventTracker {
+namespace Ghost.Gw2EventTracker {
 
     internal static class ModuleData {
 

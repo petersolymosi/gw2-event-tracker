@@ -1,8 +1,8 @@
 using System;
 using System.Text;
-using Gw2EventTracker.Models;
+using Ghost.Gw2EventTracker.Models;
 
-namespace Gw2EventTracker.Services {
+namespace Ghost.Gw2EventTracker.Services {
 
     public static class WikiUrlHelper {
 

@@ -1,7 +1,7 @@
 {
   "name": "GW2 Event Tracker",
-  "version": "0.1.0",
-  "namespace": "gw2eventtracker",
+  "version": "0.1.1",
+  "namespace": "ghost.gw2eventtracker",
   "package": "Gw2EventTracker.dll",
   "manifest_version": 1,
   "description": "Track meta and world boss schedules, get lead-time and event-started alerts, and see which daily rewards you have already claimed. Includes a Next Up overlay, Daily Progress tab, map-aware filtering, custom event profiles, and a what-should-I-do-next recommender. Schedules from giovazz89 timer data with optional remote updates.",

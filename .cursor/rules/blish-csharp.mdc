@@ -9,7 +9,7 @@ alwaysApply: false
 ## Style
 
 - Match existing code: `sealed` classes, nullable enabled, minimal scope, no over-abstraction.
-- Namespace: `Gw2EventTracker`, `Gw2EventTracker.Services`, `Gw2EventTracker.UI`, `Gw2EventTracker.Models`.
+- Namespace: `Ghost.Gw2EventTracker`, `Ghost.Gw2EventTracker.Services`, `Ghost.Gw2EventTracker.UI`, `Ghost.Gw2EventTracker.Models`.
 - Module entry: `[Export(typeof(Module))]` on `EventTrackerModule`, MEF constructor with `[Import("ModuleParameters")]`.
 
 ## Blish UI
@@ -17,7 +17,7 @@ alwaysApply: false
 - Prefer `Panel` with `CanScroll = true` over `Container` (no scroll support).
 - `ContentRegion.Size` is a `Point` — use `.X` / `.Y`, not `.Width`.
 - Set child `Height` before parents that read layout in `OnResized`; guard null children during ctor.
-- Textures from `ContentsManager.GetTexture("textures/...")` or `GameService.Content`.
+- Textures from `ContentsManager.GetTexture("textures/...")` for custom module UI, or `AsyncTexture2D.FromAssetId(...)` / `ModuleTextures` for GW2 dat icons.
 
 ## Logging
 

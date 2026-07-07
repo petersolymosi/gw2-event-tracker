@@ -1,6 +1,6 @@
 using System;
 
-namespace Gw2EventTracker.Services {
+namespace Ghost.Gw2EventTracker.Services {
 
     public static class DailyResetHelper {
 

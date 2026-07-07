@@ -1,4 +1,4 @@
-namespace Gw2EventTracker.Models {
+namespace Ghost.Gw2EventTracker.Models {
 
     public sealed class TrackableRewardStatus {
         public string DisplayName { get; set; } = string.Empty;

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace Gw2EventTracker.Services {
+namespace Ghost.Gw2EventTracker.Services {
 
     public static class EventCategoryMapper {
 

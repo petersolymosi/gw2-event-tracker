@@ -4,7 +4,7 @@ using System.Linq;
 using Blish_HUD.Settings;
 using Microsoft.Xna.Framework;
 
-namespace Gw2EventTracker.Services {
+namespace Ghost.Gw2EventTracker.Services {
 
     public sealed class ModuleSettings {
 

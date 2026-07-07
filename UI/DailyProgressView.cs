@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Blish_HUD;
 using Blish_HUD.Controls;
-using Gw2EventTracker.Models;
-using Gw2EventTracker.Services;
+using Ghost.Gw2EventTracker.Models;
+using Ghost.Gw2EventTracker.Services;
 using Microsoft.Xna.Framework;
 
-namespace Gw2EventTracker.UI {
+namespace Ghost.Gw2EventTracker.UI {
 
     public sealed class DailyProgressView : Panel {
 

@@ -1,10 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Gw2EventTracker.Services;
+using Ghost.Gw2EventTracker.Services;
 using Microsoft.Xna.Framework;
 using Newtonsoft.Json;
 
-namespace Gw2EventTracker.Models {
+namespace Ghost.Gw2EventTracker.Models {
 
     public sealed class EventSectionDefinition {
         [JsonProperty("id")]

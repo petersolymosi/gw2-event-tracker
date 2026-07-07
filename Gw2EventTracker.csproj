@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
     <AssemblyName>Gw2EventTracker</AssemblyName>
-    <RootNamespace>Gw2EventTracker</RootNamespace>
+    <RootNamespace>Ghost.Gw2EventTracker</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
     <Platforms>x64</Platforms>

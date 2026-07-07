@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Gw2EventTracker.Models;
+using Ghost.Gw2EventTracker.Models;
 using Microsoft.Xna.Framework;
 
-namespace Gw2EventTracker.Services {
+namespace Ghost.Gw2EventTracker.Services {
 
     public static class EventRewardsFormatter {
 
