@@ -5,6 +5,28 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.2] - 2026-07-07
+
+### Added
+
+- Dedicated snooze buttons on event alerts, event cards, and the Next Up overlay.
+- `SnoozeNotificationCard` for one-tap snooze from alert popups.
+
+### Changed
+
+- Notification titles and messages truncate with ellipsis instead of overflowing the card.
+- Shared event card actions (icon, wiki, waypoint) consolidated into `EventCardUiHelper`.
+- Schedule loading and module unload hardened for stability with Module Citizen.
+- Blish HUD dependency pinned to `~1.3.0`.
+
+### Removed
+
+- Unused schedule engine and trackable rewards catalog APIs.
+
+### Notes
+
+- Install package: `ghost.gw2eventtracker_0.1.2.bhm`
+
 ## [0.1.1] - 2026-07-07
 
 ### Changed
