@@ -41,7 +41,7 @@ namespace Ghost.Gw2EventTracker.UI {
 
         protected override void OnCardClicked() {
             if (!string.IsNullOrWhiteSpace(_waypoint)) {
-                CopyWaypoint(_waypoint);
+                EventCardUiHelper.CopyWaypoint(_waypoint);
             }
 
             Dispose();
@@ -77,15 +77,6 @@ namespace Ghost.Gw2EventTracker.UI {
         protected override void DisposeControl() {
             _visibleNotifications--;
             base.DisposeControl();
-        }
-
-        private static async void CopyWaypoint(string waypoint) {
-            try {
-                await ClipboardUtil.WindowsClipboardService.SetTextAsync(waypoint).ConfigureAwait(false);
-                ScreenNotification.ShowNotification("Copied waypoint to clipboard!", duration: 2);
-            } catch (Exception) {
-                ScreenNotification.ShowNotification("Failed to copy waypoint to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
-            }
         }
     }
 

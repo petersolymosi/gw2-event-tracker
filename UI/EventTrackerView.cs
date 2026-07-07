@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Linq;
 using Blish_HUD;
@@ -242,7 +241,7 @@ namespace Ghost.Gw2EventTracker.UI {
                     ShowToggleButton = true
                 };
 
-                card.Icon = ResolveCardIcon(tracked);
+                card.Icon = EventCardUiHelper.ResolveIcon(tracked);
 
                 Panel? accentPanel = null;
                 if (tracked.AccentColor.HasValue) {
@@ -269,7 +268,7 @@ namespace Ghost.Gw2EventTracker.UI {
                         Parent = card,
                         GlowColor = Color.White * 0.1f
                     };
-                    wikiButton.Click += (_, __) => OpenWiki(tracked.WikiUrl);
+                    wikiButton.Click += (_, __) => EventCardUiHelper.OpenWiki(tracked.WikiUrl);
                 }
 
                 GlowButton? waypointButton = null;
@@ -281,7 +280,7 @@ namespace Ghost.Gw2EventTracker.UI {
                         Parent = card,
                         GlowColor = Color.White * 0.1f
                     };
-                    waypointButton.Click += (_, __) => CopyWaypoint(tracked.ChatLink);
+                    waypointButton.Click += (_, __) => EventCardUiHelper.CopyWaypoint(tracked.ChatLink);
                 }
 
                 var completionLabel = new Label {
@@ -615,14 +614,6 @@ namespace Ghost.Gw2EventTracker.UI {
             return string.Join(Environment.NewLine + Environment.NewLine, lines.Where(line => !string.IsNullOrWhiteSpace(line)));
         }
 
-        private static AsyncTexture2D ResolveCardIcon(TrackedEvent tracked) {
-            if (tracked.Category == "Day-Night Cycle" || string.IsNullOrWhiteSpace(tracked.IconUrl)) {
-                return ModuleTextures.DefaultEventIcon;
-            }
-
-            return GameService.Content.GetRenderServiceTexture(tracked.IconUrl);
-        }
-
         private static void UpdateCompletionLabel(Label completionLabel, TrackedEvent tracked) {
             switch (tracked.CompletionState) {
                 case CompletionState.Completed:
@@ -732,27 +723,6 @@ namespace Ghost.Gw2EventTracker.UI {
             }
 
             return $"Starts in {timeUntil.Humanize(maxUnit: TimeUnit.Hour, minUnit: TimeUnit.Minute, precision: 2, collectionSeparator: null)}";
-        }
-
-        private static void OpenWiki(string wikiUrl) {
-            if (!Uri.TryCreate(wikiUrl, UriKind.Absolute, out var uri) || uri.Scheme != Uri.UriSchemeHttps) {
-                return;
-            }
-
-            try {
-                Process.Start(wikiUrl);
-            } catch (Exception) {
-                ScreenNotification.ShowNotification("Failed to open wiki page.", ScreenNotification.NotificationType.Red, duration: 2);
-            }
-        }
-
-        private static async void CopyWaypoint(string chatLink) {
-            try {
-                await ClipboardUtil.WindowsClipboardService.SetTextAsync(chatLink).ConfigureAwait(false);
-                ScreenNotification.ShowNotification("Copied waypoint to clipboard!", duration: 2);
-            } catch (Exception) {
-                ScreenNotification.ShowNotification("Failed to copy waypoint to clipboard. Try again.", ScreenNotification.NotificationType.Red, duration: 2);
-            }
         }
 
         private sealed class EventCard {

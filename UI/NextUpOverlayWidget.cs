@@ -73,7 +73,7 @@ namespace Ghost.Gw2EventTracker.UI {
             if (entries.Count == 0) {
                 _ = new NotificationCard(
                     "Next Up",
-                    ResolveEventIcon(null),
+                    EventCardUiHelper.ResolveIcon(null),
                     "No watched events upcoming") {
                     Parent = this
                 };
@@ -87,7 +87,7 @@ namespace Ghost.Gw2EventTracker.UI {
                 var card = new SnoozeNotificationCard(
                     tracked.Key,
                     title,
-                    ResolveEventIcon(tracked),
+                    EventCardUiHelper.ResolveIcon(tracked),
                     message,
                     BuildTooltip(tracked, isActive)) {
                     Location = new Point(0, y),
@@ -145,16 +145,6 @@ namespace Ghost.Gw2EventTracker.UI {
             }
 
             return $"{tracked.Category}{Environment.NewLine}Starts {tracked.NextStartUtc.ToLocalTime():t}";
-        }
-
-        private static AsyncTexture2D ResolveEventIcon(TrackedEvent? tracked) {
-            if (tracked == null
-                || tracked.Category == "Day-Night Cycle"
-                || string.IsNullOrWhiteSpace(tracked.IconUrl)) {
-                return ModuleTextures.DefaultEventIcon;
-            }
-
-            return GameService.Content.GetRenderServiceTexture(tracked.IconUrl);
         }
     }
 

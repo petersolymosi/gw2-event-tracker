@@ -16,7 +16,7 @@ Blish HUD module (`namespace`: `ghost.gw2eventtracker`). .NET Framework 4.7.2, x
 | Schedule engine | `Services/EventScheduleEngine.cs`, `EventScheduleLoader.cs`, `EventSchedulePatcher.cs` |
 | GW2 API progress | `Services/AccountProgressService.cs`, `TrackableRewardsCatalog.cs` |
 | Alerts | `Services/AlertService.cs` |
-| Main UI | `UI/EventTrackerView.cs`, `DailyProgressView.cs`, `SettingsView.cs`, `NextUpOverlayWidget.cs` |
+| Main UI | `UI/EventTrackerView.cs`, `DailyProgressView.cs`, `SettingsView.cs`, `NextUpOverlayWidget.cs`, `EventCardUiHelper.cs`, `DailyRewardCard.cs` |
 | Schedule data | `ref/Data/events.json`, `ref/Data/trackable-rewards.json` (embedded + copied into `.bhm`) |
 | Manifest | `manifest.json` (UTF-8, no BOM) |
 

@@ -121,13 +121,9 @@ namespace Ghost.Gw2EventTracker.Services {
         }
 
         private static void ShowNotification(TrackedEvent tracked, string message) {
-            AsyncTexture2D icon = string.IsNullOrWhiteSpace(tracked.IconUrl)
-                ? ModuleTextures.DefaultEventIcon
-                : GameService.Content.GetRenderServiceTexture(tracked.IconUrl);
-
             EventNotification.ShowNotification(
                 tracked.DisplayLabel,
-                icon,
+                EventCardUiHelper.ResolveIcon(tracked),
                 message,
                 EventTrackerModule.Instance.NotificationDuration,
                 tracked.ChatLink,
