@@ -119,29 +119,25 @@ namespace Ghost.Gw2EventTracker.Services {
 
             await _refreshLock.WaitAsync().ConfigureAwait(false);
             try {
-                var worldBossFailed = false;
-                var mapChestFailed = false;
-                IReadOnlyList<string> worldBosses = Array.Empty<string>();
-                IReadOnlyList<string> mapChests = Array.Empty<string>();
+                var fetchResult = await AccountProgressApiFetcher
+                    .FetchProgressAsync(_apiManager)
+                    .ConfigureAwait(false);
 
-                try {
-                    worldBosses = await AccountProgressApiFetcher
-                        .FetchWorldBossesAsync(_apiManager)
-                        .ConfigureAwait(false);
-                } catch (Exception ex) {
-                    worldBossFailed = true;
-                    _worldBossFetchError = ex.Message;
-                    Logger.Warn(ex, "Failed to refresh world boss progress from GW2 API.");
+                var worldBossFailed = fetchResult.WorldBossFailed;
+                var mapChestFailed = fetchResult.MapChestFailed;
+                _worldBossFetchError = fetchResult.WorldBossError;
+                _mapChestFetchError = fetchResult.MapChestError;
+
+                if (worldBossFailed) {
+                    Logger.Warn(
+                        "Failed to refresh world boss progress from GW2 API: {Error}",
+                        _worldBossFetchError);
                 }
 
-                try {
-                    mapChests = await AccountProgressApiFetcher
-                        .FetchMapChestsAsync(_apiManager)
-                        .ConfigureAwait(false);
-                } catch (Exception ex) {
-                    mapChestFailed = true;
-                    _mapChestFetchError = ex.Message;
-                    Logger.Warn(ex, "Failed to refresh map chest progress from GW2 API.");
+                if (mapChestFailed) {
+                    Logger.Warn(
+                        "Failed to refresh map chest progress from GW2 API: {Error}",
+                        _mapChestFetchError);
                 }
 
                 if (DailyResetHelper.HasUtcDayChanged(utcDayAtStart, DateTime.UtcNow)) {
@@ -162,11 +158,15 @@ namespace Ghost.Gw2EventTracker.Services {
                 }
 
                 if (!worldBossFailed) {
-                    _completedWorldBosses = new HashSet<string>(worldBosses, StringComparer.OrdinalIgnoreCase);
+                    _completedWorldBosses = new HashSet<string>(
+                        fetchResult.WorldBosses,
+                        StringComparer.OrdinalIgnoreCase);
                 }
 
                 if (!mapChestFailed) {
-                    _completedMapChests = new HashSet<string>(mapChests, StringComparer.OrdinalIgnoreCase);
+                    _completedMapChests = new HashSet<string>(
+                        fetchResult.MapChests,
+                        StringComparer.OrdinalIgnoreCase);
                 }
 
                 _lastRefreshUtc = DateTime.UtcNow;

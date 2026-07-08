@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Daily progress API polling aligned to the GW2 API ~5 minute cache (was 60 seconds).
+- Uncached daily-progress fetches use one `Gw2Client` per refresh and share Blish's `TokenComplianceMiddleware` for rate-limit compliance.
 
 ### Notes
 

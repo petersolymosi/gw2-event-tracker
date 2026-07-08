@@ -8,14 +8,19 @@ using Blish_HUD.Modules.Managers;
 using Gw2Sharp;
 using Gw2Sharp.WebApi;
 using Gw2Sharp.WebApi.Caching;
+using Gw2Sharp.WebApi.Middleware;
 
 namespace Ghost.Gw2EventTracker.Services {
 
     /// <summary>
     /// Fetches account daily-progress endpoints through a module-owned Gw2Sharp client
     /// with <see cref="NullCacheMethod"/> so Blish HUD's shared in-memory cache is bypassed.
+    /// Uses Blish's <see cref="ManagedConnection"/> subtoken (token delegation) per
+    /// https://blishhud.com/docs/modules/guides/gw2api/
     /// </summary>
     internal sealed class AccountProgressApiFetcher {
+
+        private const string TokenComplianceMiddlewareName = "TokenComplianceMiddleware";
 
         private static FieldInfo? ApiManagerConnectionField =>
             _apiManagerConnectionField ??= typeof(Gw2ApiManager).GetField(
@@ -24,18 +29,53 @@ namespace Ghost.Gw2EventTracker.Services {
 
         private static FieldInfo? _apiManagerConnectionField;
 
-        public static async Task<IReadOnlyList<string>> FetchWorldBossesAsync(
-            Gw2ApiManager apiManager,
-            CancellationToken cancellationToken = default) {
-            using var client = CreateUncachedClient(apiManager);
-            return await client.WebApi.V2.Account.WorldBosses.GetAsync(cancellationToken).ConfigureAwait(false);
+        internal sealed class FetchResult {
+            public IReadOnlyList<string> WorldBosses { get; set; } = Array.Empty<string>();
+            public IReadOnlyList<string> MapChests { get; set; } = Array.Empty<string>();
+            public bool WorldBossFailed { get; set; }
+            public bool MapChestFailed { get; set; }
+            public string? WorldBossError { get; set; }
+            public string? MapChestError { get; set; }
         }
 
-        public static async Task<IReadOnlyList<string>> FetchMapChestsAsync(
+        public static async Task<FetchResult> FetchProgressAsync(
             Gw2ApiManager apiManager,
             CancellationToken cancellationToken = default) {
             using var client = CreateUncachedClient(apiManager);
-            return await client.WebApi.V2.Account.MapChests.GetAsync(cancellationToken).ConfigureAwait(false);
+
+            IReadOnlyList<string> worldBosses = Array.Empty<string>();
+            IReadOnlyList<string> mapChests = Array.Empty<string>();
+            string? worldBossError = null;
+            string? mapChestError = null;
+            var worldBossFailed = false;
+            var mapChestFailed = false;
+
+            try {
+                worldBosses = await client.WebApi.V2.Account.WorldBosses
+                    .GetAsync(cancellationToken)
+                    .ConfigureAwait(false);
+            } catch (Exception ex) {
+                worldBossFailed = true;
+                worldBossError = ex.Message;
+            }
+
+            try {
+                mapChests = await client.WebApi.V2.Account.MapChests
+                    .GetAsync(cancellationToken)
+                    .ConfigureAwait(false);
+            } catch (Exception ex) {
+                mapChestFailed = true;
+                mapChestError = ex.Message;
+            }
+
+            return new FetchResult {
+                WorldBosses = worldBosses,
+                MapChests = mapChests,
+                WorldBossFailed = worldBossFailed,
+                MapChestFailed = mapChestFailed,
+                WorldBossError = worldBossError,
+                MapChestError = mapChestError
+            };
         }
 
         internal static IConnection CreateUncachedConnection(IConnection blishConnection) {
@@ -43,13 +83,41 @@ namespace Ghost.Gw2EventTracker.Services {
                 throw new ArgumentNullException(nameof(blishConnection));
             }
 
-            return new Connection(
+            var uncached = new Connection(
                 blishConnection.AccessToken,
                 blishConnection.Locale,
                 new NullCacheMethod(),
                 new NullCacheMethod(),
                 userAgent: blishConnection.UserAgent,
                 httpClient: blishConnection.HttpClient);
+
+            AttachBlishRateLimitMiddleware(blishConnection, uncached);
+            return uncached;
+        }
+
+        /// <summary>
+        /// Shares Blish's token-bucket middleware so uncached requests respect the global rate limit.
+        /// </summary>
+        internal static int AttachBlishRateLimitMiddleware(IConnection source, IConnection target) {
+            var attached = 0;
+
+            foreach (var middleware in source.Middleware) {
+                if (middleware is CacheMiddleware) {
+                    continue;
+                }
+
+                if (!string.Equals(
+                        middleware.GetType().Name,
+                        TokenComplianceMiddlewareName,
+                        StringComparison.Ordinal)) {
+                    continue;
+                }
+
+                target.Middleware.Add(middleware);
+                attached++;
+            }
+
+            return attached;
         }
 
         internal static IConnection? ResolveBlishConnection(Gw2ApiManager apiManager) {
