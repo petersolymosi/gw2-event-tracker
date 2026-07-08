@@ -5,6 +5,22 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.3] - 2026-07-08
+
+### Fixed
+
+- Daily Progress tab now refreshes boss and map chest completions without disabling the module.
+- Bypass Blish HUD's shared Gw2Sharp memory cache for account daily-progress API calls via `NullCacheMethod`.
+- Cross-midnight API fetches schedule a follow-up refresh instead of leaving stale data.
+
+### Changed
+
+- Daily progress API polling aligned to the GW2 API ~5 minute cache (was 60 seconds).
+
+### Notes
+
+- Install package: `ghost.gw2eventtracker_0.1.3.bhm`
+
 ## [0.1.2] - 2026-07-07
 
 ### Added

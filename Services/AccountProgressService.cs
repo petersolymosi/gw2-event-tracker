@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Blish_HUD;
 using Blish_HUD.Modules.Managers;
@@ -27,13 +28,14 @@ namespace Ghost.Gw2EventTracker.Services {
         private string _statusMessage = string.Empty;
         private string? _worldBossFetchError;
         private string? _mapChestFetchError;
+        private readonly SemaphoreSlim _refreshLock = new SemaphoreSlim(1, 1);
 
         public event EventHandler? ProgressUpdated;
 
         /// <summary>True when the last API fetch failed; module should retry sooner.</summary>
         public bool NeedsUrgentRefresh => _fetchFailed;
 
-        private const double MinRefreshSeconds = 45;
+        private const double MinRefreshSeconds = 300;
 
         public AccountProgressService(Gw2ApiManager apiManager, TrackableRewardsCatalog catalog) {
             _apiManager = apiManager;
@@ -113,17 +115,19 @@ namespace Ghost.Gw2EventTracker.Services {
             _worldBossFetchError = null;
             _mapChestFetchError = null;
             var utcDayAtStart = DailyResetHelper.UtcDay(utcNow);
+            var retryAfterRelease = false;
 
+            await _refreshLock.WaitAsync().ConfigureAwait(false);
             try {
-                var client = _apiManager.Gw2ApiClient.V2;
-
                 var worldBossFailed = false;
                 var mapChestFailed = false;
                 IReadOnlyList<string> worldBosses = Array.Empty<string>();
                 IReadOnlyList<string> mapChests = Array.Empty<string>();
 
                 try {
-                    worldBosses = await client.Account.WorldBosses.GetAsync().ConfigureAwait(false);
+                    worldBosses = await AccountProgressApiFetcher
+                        .FetchWorldBossesAsync(_apiManager)
+                        .ConfigureAwait(false);
                 } catch (Exception ex) {
                     worldBossFailed = true;
                     _worldBossFetchError = ex.Message;
@@ -131,7 +135,9 @@ namespace Ghost.Gw2EventTracker.Services {
                 }
 
                 try {
-                    mapChests = await client.Account.MapChests.GetAsync().ConfigureAwait(false);
+                    mapChests = await AccountProgressApiFetcher
+                        .FetchMapChestsAsync(_apiManager)
+                        .ConfigureAwait(false);
                 } catch (Exception ex) {
                     mapChestFailed = true;
                     _mapChestFetchError = ex.Message;
@@ -141,11 +147,18 @@ namespace Ghost.Gw2EventTracker.Services {
                 if (DailyResetHelper.HasUtcDayChanged(utcDayAtStart, DateTime.UtcNow)) {
                     EnsureUtcDay(DateTime.UtcNow);
                     Logger.Info("Discarded stale GW2 API progress fetched across UTC daily reset.");
+                    retryAfterRelease = true;
                     return;
                 }
 
                 if (worldBossFailed && mapChestFailed) {
-                    throw new InvalidOperationException("Both world boss and map chest progress requests failed.");
+                    _lastRefreshUtc = DateTime.UtcNow;
+                    _fetchFailed = true;
+                    SetAccessState(
+                        ProgressAccessState.FetchFailed,
+                        BuildFetchFailedMessage());
+                    NotifyProgressChanged();
+                    return;
                 }
 
                 if (!worldBossFailed) {
@@ -170,19 +183,17 @@ namespace Ghost.Gw2EventTracker.Services {
                 }
 
                 Logger.Info(
-                    "Progress refreshed: {WorldBossCount} world bosses, {MapChestCount} map chests.",
+                    "Progress refreshed (uncached): {WorldBossCount} world bosses, {MapChestCount} map chests.",
                     _completedWorldBosses.Count,
                     _completedMapChests.Count);
 
                 NotifyProgressChanged();
-            } catch (Exception ex) {
-                _fetchFailed = true;
-                _hasApiAccess = false;
-                SetAccessState(
-                    ProgressAccessState.FetchFailed,
-                    "Failed to refresh daily progress from the GW2 API. Check your API key and module permissions.");
-                Logger.Warn(ex, "Failed to refresh account progress from GW2 API.");
-                NotifyProgressChanged();
+            } finally {
+                _refreshLock.Release();
+            }
+
+            if (retryAfterRelease) {
+                _ = RefreshAsync(force: true);
             }
         }
 

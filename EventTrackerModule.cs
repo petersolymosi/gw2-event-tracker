@@ -44,9 +44,10 @@ namespace Ghost.Gw2EventTracker {
         private DateTime _lastMapProgressRefreshUtc = DateTime.MinValue;
         private bool _usedRemoteSchedule;
 
-        private const double ProgressRefreshSeconds = 60;
-        private const double UrgentProgressRefreshSeconds = 20;
-        private const double MapProgressRefreshSeconds = 30;
+        // GW2 API caches /v2/account/worldbosses and mapchests for ~5 minutes.
+        private const double ProgressRefreshSeconds = 300;
+        private const double UrgentProgressRefreshSeconds = 60;
+        private const double MapProgressRefreshSeconds = 300;
         private const double AccessRetrySeconds = 15;
 
         internal ContentsManager ContentsManager => ModuleParameters.ContentsManager;
